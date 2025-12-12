@@ -1,0 +1,67 @@
+### xor
+
+xor has a property that makes it massively important part of crypto:
+The ability to reverse itself.
+
+Types of Encyption
+Symmetric - Both sides shares the same key 
+ - Stream - Encrypts byte by byte
+ - Block - Encrypts block by block
+Asymmetric - Each side has their own private key and exchanging their public keys
+
+**Stream ciphers** 
+for example RC4 which is commonly used in SSL 
+to encrypt - random number generator seeded with your key the resulted bytes xored with each byte of plain text 
+to decrypt - xor the ciphertext with the key seeded
+in these method the quality of our random (in computers there isnt a real random else a math based random) is the quality/strength of our cipher.
+
+**Block Ciphers**
+AES,DES,3DES,TwoFIsh etc are all Block Ciphers unlike stream cipher here the encryption and decryption are usually not the same.
+In Block ciphers we split the data to N bytes and encrypt each block seperatly as we cant assume the data s divided by exactly N we add padding to make it round divided
+**Block Cipher Modes** -  because block ciphers encrypts block to block many modes trying to make them more secure and serve various goals
+ECB Mode - Electronic CodeBook Mode - each block encrypted independtly to produce a cipher block as if two blocks are the same the cipher would ne same.
+CBC Mode - plaintext got 1 bit from the previous block to make the result even for same bytes diffrent
+
+####  **Hashes (Hash Functions)**
+
+A **hash** is a one-way mathematical function that takes any input (text, file, password) and turns it into a fixed-length string of characters.  
+Key points:
+
+- **One-way**: you _cannot_ reverse it to get the original input.
+    
+- **Deterministic**: same input → same hash.
+    
+- **Sensitive**: tiny change in input → completely different hash (“avalanche effect”).
+    
+- **Uses**: password storage, integrity checks, digital signatures.
+    
+
+Think of it as a digital fingerprint.
+## **Asymmetric Encryption**
+
+Asymmetric encryption uses **two keys**:
+
+- **Public key** → encrypt
+    
+- **Private key** → decrypt
+    
+
+You can share the public key with anyone, but the private key stays secret.
+
+Key points:
+
+- Enables secure communication without sharing a secret key beforehand.
+    
+- Also used for **digital signatures**:
+    
+    - Sign with **private key**
+        
+    - Verify with **public key**
+        
+
+Common algorithms: RSA, ECC.
+
+
+#### MACs 
+Message auth code - based on hashes (mostly) with amac u can ensure that your data didnt got tampered with as well validating that the mac itself hasnt manipulated as it has a key for his itself validation
+**HMAC**  - type of mac validation -  HMAC(key,message) = hash(key ,hash(key,message))
