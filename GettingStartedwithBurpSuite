@@ -1,0 +1,29 @@
+What is it Burp Suite - a proxy sitting between u and the server which lets u see and intercept in all the requests 
+
+#### **Intruder**
+Help us to amke automatic attacks on parameters in http/s web requests in burp suite 
+##### Attack Types:
+###### Sniper - One target to check in each run in each request only one field is going to change if u marked three fields it will attack 1 at a time.
+for example: username=§admin§&id=§1§&role=§user§
+first request admin gonna change then next request id then role etc.
+###### Batteling Ram - 
+same payload for all marked parameters in the same request 
+for example: username=§admin§&id=§1§&role=§user§
+if the payload is lets say 1 the request field would look like
+username=1&id=1&role=1.
+
+###### Pitchfork
+pitchfork is using list of payload for each parameter and trying it in parallel with pairing to each parameter his list of payload and in each request the next payload goes to the next parameter
+
+###### Cluster Bomb 
+Alla Wackbur all x all every payload goes to any parameter as all the combinations as possible is getting a request.
+
+##### Grep-Extract 
+an option to take from the response the line that we intrested to see and show it in the dashbord of the attack (found in the payload options)
+
+###### Burp Scanner
+Burp Passive Scanner is Burp Suite’s automated vulnerability-scanning engine. It analyzes web applications by sending crafted requests, inspecting responses, and detecting common security flaws.
+
+-burp has a csrf Poc automaticly makes a Poc if u founded anything
+
+-if a mobile app is acting diffrent if sended to proxy burp has an invisible proxy option for hiding the proxy from the app to maintain his behavier
