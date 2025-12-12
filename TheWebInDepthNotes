@@ -1,0 +1,52 @@
+**Cookies** - cookies added for domain can be read (recived) by his subdomains
+
+**for example:** cookie written by example.com can be red by test.example.com or by test2.example.com etc and give access to the resource.
+
+cookies made by a sub domain can only be red by him or his subdomain.
+
+**for example:** cookie made by test.example.com can be red by t1.test.example.com but not by test2.example.com.
+
+a subdomain can set (make) cookie for its subdomain and parent but not for his brothers.
+
+there is the crusial diffrence between making a cookie as making a key and reading as taking the key and using it.
+
+**Cookies Flags**: 
+Secure - the cookie only accessable and can be used in https websites 
+HTTPOnly: The cookie only can be sent up with request and cant be seen with javascript command such  as console.log(document.cookie);
+
+**HTML**
+**Parsing** - html isnt just parsed by your browser it also parsed in the fw to deffend cross site scripting or xss etc and if they are pasrsing a request in diffrent ways that is vulnerable. 
+
+**Content-Sniffing** 
+a situation when the browser guessed the type of content of what he got from the server.
+for example the server sent plain text but the browser thinks its html and he trying to display it as html and if he wronged and there is a code in there that could be dangerous.
+
+**MIME-Sniffing** 
+The Browser often not only looks in the Content-type header and also looks in the content of the page and if it looked enougth like html it parsed as html.
+In IE6/7 -era this sniffing teqnique was common on image and text but todays it found in enterprises and old servers with not sending the header right. 
+so if a image stored enougth html it will be threated as html giving the user an execute options in the place of the image stored because of that problem and others facebook made a seperate domain to images to keep their main domain safe.
+
+**Encoding-sniffing**
+if u dont specify the encoding the browser will apply what he thinks is the encoding for u and if u can control the browser encoding u can control the parsing and pass througth filters.
+
+**UTF-7**-  is 7 bit asscii with embedded base64 blocks for extended range characters for anything 
+isnt in range of 7 bit. {a + is a sign to say heres a base64 extended char}. 
+ 
+ when UTF-7 decoded if encoded by the browser it will identify utf-7 and be decoded for example as <script>alert(1);</script> but for the fw it will look like +ADw-script+AD$4-alert(1);+ADw./script+AD4- which is safe and can go inside the web. 
+
+**so tip for developers always specify mime types and encoding**
+
+**Same-Origin-Policy(SOP):** 
+is how the browser contols what domains u can contact with xmlhttprequest & your access to the DOM (Document Object Model) across separate frames/windows 
+when a js code is running the browser seperates it to its own sandbox any fetch request or something trying to go to another domain will be blocked by the browser. 
+if a code wants to see another code a sop policy will block it unless three conditions are matched exactlly (no wildcard or anything) 
+1 same domain
+2 same protocol
+3 same port 
+**SOP Loosing:** 
+a developer can loose the restriction of sop by using CORS (cross-origin resource sharing) or postMessage into an Iframe 
+
+**CSRF -Cross-Site Request Forgery:** 
+When an attacker tricks a victim into going to a page controlled by the attacker which then submits data he target as the victim.
+how for a bank to differ between a post request to pass money that a actual legit user wants to a request made by an attacker (lets say the attacker is also in the bank so he got an account but how to understand if he faking other user request or its real user what can identify the user ?) how can we identify the user ?
+CSRF Tokens - a token which related to a user and whenever a server gets a post request its checks the token for validation
