@@ -1,0 +1,69 @@
+#### Stream Cipher Reuse ####
+[random bytes] XOR [plain text] => [CipherText]
+**Any time you feed a given key into stream cipher it will output the same result this is expected and this is why encryption works in the same as decryption**
+==when using the same key stream each byte get xored with the same key stream and they cancel each other when two cipher text xored with each other.==
+For modern ciphers it is not a problem like eStream as they take a nonce with the key so if u dont use the same nonce-key pair u safe.
+but the most common stream cipher is RC4 which dont use a nonce and is vuln the way to solve it for rc4 is to use nonce before the encryption (as in eStream it is part of the encrypt) it is not perfect but it is works.
+
+#### ECB Block Reordering ####
+as in block encryption each block is independent (in ecb mode not in cbc ) nothing stops as from reordering these blocks on our own so lets say the server uses des-ecb mode so each 8 bytes are blockeded.
+do lets say a cookie has the following data:
+admin=0;username=daekan
+if we will seperate to blocks it will be 
+admin=0;
+username
+=daekan@ {@ for padding to round it to be 8 bytes}
+each one of these is become a seperate cipher block now heres the fun part if we have a control of choosing the username we can use our knowledge that the system seperates to 8 blocks againt the system we will enter for example paddingadmin=1; as username and we would get this block in the cookie 
+admin=0;
+username
+=padding
+admin=1; 
+so we used the system to encrypt with the key a seperate block of admin=1; now all left to do is to swith the admin=0; seperate block with admin=1; block and send the cookie.
+
+this attack is inherent (טבוע) in the nature of ECB mode
+
+The Solution -the server encrypt your data then add your MAC made with your mac key and the cipher text to that (encrypt first the cipher text) now the server will send to client the cookie with the data and hmac made by the data and wait for the user to use the cookie 
+the server waits for ciphertext & hmac any else will not grant access.
+ if the user trying the attack and changing the order of the ecb blocks but using the old hmac or any guessed hmac the server will find it by taking the cipher code calculating the hmac for it and comparing with the given hmac, as only the server knows the hmac key and given hmac it is not the new one that the server expecting to recieve will result an error.
+
+####  The CBC Mode ####
+**IV** - Initialization Vector helps to make randomness to the encryption without iv same key and same plaintext makes the same and aeven if the key is makes thing diffrent from cipher to cipher the iv makes it more random and helps to change even when the key is the same the cipher would be diffrent.
+
+![[Pasted image 20251213151856.png]]
+#### Padding ####
+as known padding used to round the data into the encryption boundaries.
+**PKCS#7** - most common padding system 
+if u need 1 byte of padding its a sindle 01 byte needs 2 bytes of padding its 2 bytes of 02 etc
+examples:
+daeken =(6/8)> daeken\x02\x02
+somedatagoeshere - 16/16 - 2 blocks => somedatagoeshere\x08\x08\x08\x08\x08\x08\x08\x08
+ any why is that why we would need a whole another block to be sure about the padding without a doubt is the last byte is a padding byte or not (didnt really understood) 
+
+**Padding Oracle Atttacks**
+- Allows the attacker to retrieve the original plaintext from the ciphertext
+
+- Required CBC Mode and PKCS&#7 Padding Oracle anx XOR
+
+xor done bit by bit byte by byte so a change of 1 bit will change only the same located bit in the output
+and u can get the third party from xoring the 2
+a XOR b = c
+c XOR b = a
+a XOR c = b
+**Oracle** 
+Oracle - black box that answer a certain question yes or no.
+Padding Oracle - An Oracle with the question does the decrypted plaintext have a valid padding? and gets a cuphertext input.
+**Attacker PoV**
+- yes from the oracke helps more than no as if no it still can be anything
+- attacker has the ciphertext therefore he has the cipher blocks
+- attacker can control the input into the padding oracle
+**Key Insight** - force the decrypted plaintext to have valid padding by manipulating the input ciphertext
+**The Attack logic**
+![[Pasted image 20251213145132.png]]
+**Decrypt Process**
+when we decrypting (lets say not the first block so it will fit to the image and to not envolve iv)
+c1 is the last byte in the CBC chain that got encrypted , c2 is the next one that we want to decrypt,(next encrypted data)
+then we take the key decrypt the c2 and then for getting the plain text we need to "Break the chain" with xoring with the c1 to get the ciphertext.
+**Attack Idea**
+	lets say there is a web server sending as a cbc standard padding cookie so we have the cookie and we trying to test the server reaction the server using padding expect to see padding and if he will see something else will return an error so we take the cookie and change only the last bytte as in the decrypting process the last byte is affecting the plain text as it xored into it i2 xor the c1 we passed and we as we just putted a random number there getting an error cause the output isnt valid padding but we keep trying with other value each time till the server acts diffrent - there is no padding error {MAYBE SOME OTHER ERROR BUT Not padding one } cause we got valid 01 padding now if we would xor our byte  with 01 because of xor nature we would get the i2 byte then we will keep trying for the next byte with checking 02 02 (with same payload in both bytes) and looking for a valid padding sign when we find it we would xor to get the i2 and keep going to 03 etc till we got the full i2 pattern when we got it we will use the original c1 with the founded i2 xoring them will give us the plain text! 
+	Mac your data after encryption to solvew the problem how ever a lot of crypto protocols dont do that and cant be done because of compatibility issues in this case making the user not knowing why the decryption failed can be useful |
+Hash length attack
