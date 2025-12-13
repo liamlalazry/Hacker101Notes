@@ -1,0 +1,17 @@
+**Detection of ECB** - Repetiition is the identifier for ecb - remember how it works 
+**Detection of the block size** - playing with the input output changing aaaaaaaaaaaaa to aaaaaaBaaaaa something going to change in the bytes or a gup in repetition the hole made is the size of a block
+**Detection of Offset** - where our string of data is placed ? the number of characters u can change at the beggining of the payload is the offset from the begging of the whole encrypted string
+the number of character u can change on the end of your payload is tthe offset from the end 
+the offset is recognized by the server logic responding to your cookie or cipher changes.
+
+PadBuster -tool from GDS to explode the padding oracle attack
+
+Using Crypto 
+for data in flight => TLS 
+for data in rest => PGP
+
+Do not :
+Mac then Encrypt - u open to attacks
+Use hash instead of MAC => u enable hash extention atacks
+reuse iv key or key-nonce pairs => open yourself to multitude of issues
+Use ECB there is no use for this  from all u should know !
